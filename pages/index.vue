@@ -29,6 +29,7 @@
   // 生成要移动到的坐标。小球总是会移动到屏幕的某个边上。
   const vx = ref(1000) // 水平速度
   const vy = ref(1000) // 垂直速度
+  let isMounted = false // For hot reload in dev mode only
   let positiveX = true
   let positiveY = true
   let x = 0
@@ -76,22 +77,16 @@
     // 使用 GSAP 更新位置
     gsap.to('#box', { x: x, y: y, duration: frameSec, ease: 'none' })
 
-    requestAnimationFrame(update)
+    if (isMounted) requestAnimationFrame(update)
   }
 
   onMounted(() => {
+    isMounted = true
     update()
-    // document.addEventListener(
-    //   'click',
-    //   () => {
-    //     pause = !pause
-    //     if (!pause) update()
-    //   },
-    //   { passive: true },
-    // )
     const bgColor = document.body.style.backgroundColor
     document.body.style.backgroundColor = 'black'
     onUnmounted(() => {
+      isMounted = false
       document.body.style.backgroundColor = bgColor
     })
   })
